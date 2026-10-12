@@ -15,7 +15,8 @@
     "@mealmuse/shared": "workspace:*",
     "@tanstack/react-query": "5.104.2",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@testing-library/react": "16.3.3",
