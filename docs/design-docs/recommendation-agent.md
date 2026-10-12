@@ -72,7 +72,11 @@
 - **效果评测**（手动运行，接真实模型）：一组固定的代表性档案，产出推荐快照，人工比对不同 prompt_version 的效果；结果记录到 docs/generated 目录。
 - **可观测性**：llm_calls 记录耗时、token 与失败；推荐写一条结构化日志，包括候选池大小、所选策略和耗时。
 
-## 6. 待确认（需要中转站信息）
+## 6. 中转站能力（2026-10-12 探测）
+
+对话、JSON Schema 结构化输出、工具调用可用；**没有 Embedding 模型**，第 3 节的偏好相似度按 Jaccard 方案实现。可用对话模型包括 gpt-6.1-sol、gpt-5.4-mini 等 12 个。
+
+## 7. 原待确认项（已由探测回答）
 
 1. 中转站的 Base URL、接口格式（Chat Completions 还是 Responses），以及 `gpt-6.1-sol` 是否支持 JSON Schema 结构化输出和工具调用。
 2. 是否提供 Embedding 模型。

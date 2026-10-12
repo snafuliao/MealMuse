@@ -1,6 +1,6 @@
 # 设计：数据模型（PostgreSQL + pgvector）
 
-- **状态**：草稿，待评审
+- **状态**：已部分实现（identity、model-config、recipe 三个领域），其余领域待实现
 - **日期**：2026-10-12
 - **关联**：`docs/product-specs/daily-recommendation.md`、`docs/product-specs/admin.md`、`docs/design-docs/recommendation-agent.md`
 
@@ -37,15 +37,15 @@
 
 ### recipe
 
-- **ingredients**：id、name（标准名，唯一）、aliases（text[]）、category（蔬菜 / 肉禽 / 水产 / 蛋奶 / 豆制品 / 主食 / 干货 / 调味 / 其他）、allergen_tags（text[]）、is_pantry_staple（bool）、search_keyword（采购搜索词）、status（active / pending_review）。
+- **ingredients**：id、name（标准名，唯一）、aliases（text[]）、category（vegetable / fruit / meat / seafood / egg_dairy / soy / staple / dry_goods / seasoning / other）、allergen_tags（固定 9 类过敏原）、diet_tags（pork / beef / alcohol）、is_pantry_staple（bool）、search_keyword（采购搜索词）。实现时去掉了 status：种子与管理端新建的食材直接可用，在食材库中修正，修改后自动重新派生相关菜谱的标记。
 - **recipes**：
   - 基本：id、slug（唯一）、name、description、cuisine、meal_types（meal_type[]）、course（meat / veg / soup / staple / snack / drink）、difficulty（1–5）、prep_minutes、cook_minutes、base_servings、flavor_tags（text[]）、spice_level（0–3）、equipment（text[]）、tips
   - 派生：diet_flags（text[]，由食材推导，如 vegetarian），allergen_tags（text[]，由食材汇总）。这两列由服务端在保存时计算，不手填，用于硬约束过滤
   - 治理：status（draft / pending_review / published / rejected / archived）、source（seed / llm / admin）、source_ref（种子菜谱的原文件路径或链接）、generated_for_user_id（模型生成时触发的用户）、generated_model、review_note、reviewed_by、reviewed_at、created_at、updated_at
 - **recipe_ingredients**：recipe_id、ingredient_id、group（main / side / seasoning）、quantity（numeric，可空，表示「适量」）、unit（g / ml / 个 / 勺 / 适量 …）、prep_note（如「切丝」）、optional（bool）、position。
 - **recipe_steps**：recipe_id、position、instruction、duration_minutes（可空）、tip（可空）。
-- **recipe_embeddings**：recipe_id、model、embedding（vector(N)）、content_hash（用于判断菜谱改动后是否要重算）、created_at。主键为 (recipe_id, model)。维度 N 在确定 Embedding 模型后固定，并建 HNSW 索引；换模型时用新列或新表迁移。
-- **seed_import_items**：id、batch、source_path、status（imported / failed / skipped）、recipe_id、error、created_at。
+- **recipe_embeddings**（未实现：中转站没有 Embedding 模型）：recipe_id、model、embedding（vector(N)）、content_hash（用于判断菜谱改动后是否要重算）、created_at。主键为 (recipe_id, model)。维度 N 在确定 Embedding 模型后固定，并建 HNSW 索引；换模型时用新列或新表迁移。
+- **seed_import_items**：id、batch、source_path（唯一）、status（imported / failed / skipped）、recipe_id、error、structured（模型结构化结果，重试时复用）、prompt_version、created_at。
 
 ### plan
 
@@ -80,6 +80,7 @@
 - 一次性导入脚本：解析每道菜的 Markdown，分出原料、用量、操作三部分；用模型结构化成上面的 schema，并做 zod 校验；食材名按别名表归一，未识别的食材以 pending_review 状态新建。
 - 校验通过的菜谱以 published、source = seed 入库，并记录 source_ref；不通过的写入 seed_import_items，在管理端处理。导入后人工抽查 20 道。
 
-## 6. 待确认
+## 6. 已确认
 
-- Embedding 模型与维度：取决于中转站是否提供 Embedding 接口。没有的话，排序退回到「标签 + 食材重合度」打分，profile 与 recipe 的 embedding 列先留空（见 `docs/design-docs/recommendation-agent.md`）。
+- 2026-10-12 实测中转站没有 Embedding 模型：菜名检索使用 pg_trgm（recipes.name 上的三元组索引），推荐排序使用「标签 + 食材重合度」打分；recipe_embeddings 与 preference_embedding 暂不建（见 `docs/design-docs/recommendation-agent.md`）。
+- 厨具（equipment）是固定枚举，见 packages/shared 的 EquipmentSchema。
