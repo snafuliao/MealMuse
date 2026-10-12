@@ -10,6 +10,8 @@ export type CompleteRequest<T> = {
   /** 提供时要求模型输出符合该 schema 的 JSON，并在返回前完成解析。 */
   schema?: { name: string; zod: z.ZodType<T> };
   userId?: string;
+  /** 覆盖供应商的默认超时，用于批量结构化这类长输出任务。 */
+  timeoutMs?: number;
 };
 
 export type LlmGateway = {
@@ -39,10 +41,10 @@ const errorStatus = (error: unknown): LlmCallRecord['status'] =>
 export function createLlmGateway(deps: LlmGatewayDeps): LlmGateway {
   const fetchImpl = deps.fetchImpl ?? fetch;
 
-  async function requireConfig(): Promise<LlmConfig> {
+  async function requireConfig(timeoutMs?: number): Promise<LlmConfig> {
     const config = await deps.resolveConfig();
     if (!config) throw new LlmError('not_configured', '尚未在管理端启用模型供应商');
-    return config;
+    return timeoutMs ? { ...config, timeoutMs } : config;
   }
 
   /** 执行一次调用并记录 llm_calls（不含正文）与结构化日志。 */
@@ -108,7 +110,7 @@ export function createLlmGateway(deps: LlmGatewayDeps): LlmGateway {
     },
 
     async completeText(request) {
-      const config = await requireConfig();
+      const config = await requireConfig(request.timeoutMs);
       return tracked(config, { ...request, model: config.chatModel }, async () => {
         const result = await chat(config, { model: config.chatModel, messages: request.messages });
         return {
@@ -120,7 +122,7 @@ export function createLlmGateway(deps: LlmGatewayDeps): LlmGateway {
     },
 
     async completeJson(request) {
-      const config = await requireConfig();
+      const config = await requireConfig(request.timeoutMs);
       const jsonSchema = z.toJSONSchema(request.schema.zod, { io: 'output' });
       const nativeSchema = config.capabilities?.structuredOutput !== false;
       const responseFormat = nativeSchema

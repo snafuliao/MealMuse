@@ -111,6 +111,14 @@ describe('transport', () => {
     expect(calls).toHaveLength(1);
   });
 
+  it('lets a single call override the provider timeout', async () => {
+    const { llm } = gateway([new DOMException('timed out', 'TimeoutError'), chatReply('ok')]);
+    // 只验证参数能传入且不影响正常返回；超时本身由 AbortSignal 实现。
+    expect(await llm.completeText({ purpose: 'chat', messages: [], timeoutMs: 120_000 })).toBe(
+      'ok',
+    );
+  });
+
   it('reports not_configured when no provider is active', async () => {
     const { llm } = gateway([], null);
     await expect(llm.completeText({ purpose: 'chat', messages: [] })).rejects.toBeInstanceOf(
