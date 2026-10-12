@@ -53,6 +53,7 @@
 | 2026-10-12 | 一键购买调研完成，结论文档已登记到设计文档索引 | 页面级跳转落点需要真机验证 |
 | 2026-10-12 | 装好 Xcode 27：App 外壳本地 xcodebuild 构建通过，无项目代码警告；修复 ios-test.sh 在完整 Xcode 下的空数组展开错误 | 还没有 iOS 模拟器运行时 |
 | 2026-10-12 | 安装 iOS 27 模拟器运行时；App 在 iPhone 18 Pro 模拟器中连上本地服务端，端到端验证通过；新增 `pnpm ios:generate` / `pnpm ios:build`；TD-1 已偿还 | CI 尚未运行（无远程仓库） |
+| 2026-10-12 | 推送到 GitHub（SSH）；首次 CI 两个 job 均未启动 | GitHub 账号因账单问题被锁定，需用户处理后重跑 |
 
 ## 关联
 - 需求：`docs/requirements.md`
