@@ -16,4 +16,5 @@ if [[ "$developer_dir" == *CommandLineTools* ]]; then
     -Xlinker -rpath -Xlinker "$libs")
 fi
 
-exec swift test --package-path "$package_path" "${extra[@]}" "$@"
+# macOS 自带 bash 3.2：空数组在 set -u 下直接展开会报错，需用 ${arr[@]+...} 形式。
+exec swift test --package-path "$package_path" ${extra[@]+"${extra[@]}"} "$@"
