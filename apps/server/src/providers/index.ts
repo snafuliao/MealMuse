@@ -1,6 +1,8 @@
 import type { AppConfig } from '../config/env.js';
 import { createDatabase, type Database } from './database.js';
+import type { LlmGateway } from './llm/gateway.js';
 import { createLogger, type Logger } from './logger.js';
+import { createSecrets, type Secrets } from './secrets.js';
 
 /**
  * 横切关注点的唯一入口（规则：横切关注点仅可通过 Providers 进入）。
@@ -9,16 +11,19 @@ import { createLogger, type Logger } from './logger.js';
 export type Providers = {
   config: AppConfig;
   logger: Logger;
-  database: Pick<Database, 'ping'>;
+  database: Database;
+  secrets: Secrets;
+  llm: LlmGateway;
 };
 
-export function createProviders(config: AppConfig): Providers & { shutdown(): Promise<void> } {
-  const logger = createLogger(config.logLevel);
-  const database = createDatabase(config.databaseUrl);
+/** 不依赖任何领域的基础设施；llm 需要领域提供配置，由组合根（src/composition.ts）补齐。 */
+export type Infrastructure = Omit<Providers, 'llm'>;
+
+export function createInfrastructure(config: AppConfig): Infrastructure {
   return {
     config,
-    logger,
-    database,
-    shutdown: () => database.close(),
+    logger: createLogger(config.logLevel),
+    database: createDatabase(config.databaseUrl),
+    secrets: createSecrets(config.modelSecretsKey),
   };
 }
