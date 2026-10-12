@@ -6,7 +6,7 @@
 |---|---|---|---|---|---|
 | server: system（健康检查） | B | B | A | B | 只有单元测试，没有数据库集成测试 |
 | admin-web | B | B | A | — | 只有健康状态展示 |
-| ios: MealMuseKit | B | B | A | — | App 外壳本地可构建，尚未在模拟器中运行（见 TD-1） |
+| ios: MealMuseKit | B | B | A | — | App 外壳已在模拟器端到端验证；尚无 UI 自动化测试 |
 | tools/harness | A | B | — | — | 6 条规则，均有测试 |
 
 最近更新：2026-10-12（Day 0）。
