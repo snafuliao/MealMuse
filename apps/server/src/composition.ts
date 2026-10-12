@@ -7,6 +7,10 @@ import {
   createModelConfigService,
   type ModelConfigService,
 } from './domains/model-config/service/model-config-service.js';
+import {
+  createRecipeService,
+  type RecipeService,
+} from './domains/recipe/service/recipe-service.js';
 import { createInfrastructure, type Infrastructure, type Providers } from './providers/index.js';
 import { createLlmGateway } from './providers/llm/gateway.js';
 
@@ -14,6 +18,7 @@ export type AppServices = {
   providers: Providers;
   identity: IdentityService;
   modelConfig: ModelConfigService;
+  recipe: RecipeService;
 };
 
 /** 组合根：Providers 不依赖领域，模型配置由 model-config 领域在这里注入 LLM Gateway。 */
@@ -29,6 +34,7 @@ export function composeServices(infrastructure: Infrastructure): AppServices {
     providers,
     modelConfig,
     identity: createIdentityService(providers),
+    recipe: createRecipeService(providers),
   };
 }
 

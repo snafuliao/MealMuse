@@ -54,5 +54,6 @@ export function fakeServices(providers: Providers = fakeProviders()): AppService
     providers,
     identity: unused('identity'),
     modelConfig: unused('modelConfig'),
+    recipe: unused('recipe'),
   };
 }

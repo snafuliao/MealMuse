@@ -5,6 +5,7 @@ import { z } from 'zod';
 import type { AppServices } from './composition.js';
 import { identityRoutes } from './domains/identity/runtime/routes.js';
 import { modelConfigRoutes } from './domains/model-config/runtime/routes.js';
+import { recipeRoutes } from './domains/recipe/runtime/routes.js';
 import { systemRoutes } from './domains/system/runtime/routes.js';
 import { AppError, requireAdmin, requireAuth, type AppEnv } from './providers/http.js';
 import { LlmError } from './providers/llm/types.js';
@@ -58,6 +59,7 @@ export function createApp(services: AppServices) {
   app.route('/', systemRoutes(providers));
   app.route('/', identityRoutes(services.identity, providers));
   app.route('/', modelConfigRoutes(services.modelConfig));
+  app.route('/', recipeRoutes(services.recipe));
 
   app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
     type: 'http',

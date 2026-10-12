@@ -532,6 +532,756 @@
           "structure_seed",
           "probe"
         ]
+      },
+      "Recipe": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "cuisine": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20
+          },
+          "mealTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MealType"
+            },
+            "minItems": 1
+          },
+          "course": {
+            "$ref": "#/components/schemas/Course"
+          },
+          "difficulty": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "prepMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "cookMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "baseServings": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "flavorTags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 10
+            },
+            "maxItems": 10
+          },
+          "spiceLevel": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "equipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Equipment"
+            },
+            "maxItems": 7
+          },
+          "tips": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RecipeStatus"
+          },
+          "source": {
+            "$ref": "#/components/schemas/RecipeSource"
+          },
+          "sourceRef": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "allergenTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            }
+          },
+          "dietFlags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DietFlag"
+            }
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecipeIngredient"
+            }
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecipeStep"
+            }
+          },
+          "reviewNote": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "cuisine",
+          "mealTypes",
+          "course",
+          "difficulty",
+          "prepMinutes",
+          "cookMinutes",
+          "baseServings",
+          "flavorTags",
+          "spiceLevel",
+          "equipment",
+          "tips",
+          "id",
+          "status",
+          "source",
+          "sourceRef",
+          "allergenTags",
+          "dietFlags",
+          "ingredients",
+          "steps",
+          "reviewNote",
+          "updatedAt"
+        ]
+      },
+      "MealType": {
+        "type": "string",
+        "enum": [
+          "breakfast",
+          "lunch",
+          "dinner"
+        ]
+      },
+      "Course": {
+        "type": "string",
+        "enum": [
+          "meat",
+          "veg",
+          "soup",
+          "staple",
+          "snack",
+          "dessert",
+          "drink"
+        ]
+      },
+      "Equipment": {
+        "type": "string",
+        "enum": [
+          "oven",
+          "air_fryer",
+          "steamer",
+          "rice_cooker",
+          "pressure_cooker",
+          "microwave",
+          "blender"
+        ]
+      },
+      "RecipeStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "pending_review",
+          "published",
+          "rejected",
+          "archived"
+        ]
+      },
+      "RecipeSource": {
+        "type": "string",
+        "enum": [
+          "seed",
+          "llm",
+          "admin"
+        ]
+      },
+      "Allergen": {
+        "type": "string",
+        "enum": [
+          "peanut",
+          "tree_nut",
+          "shellfish",
+          "fish",
+          "egg",
+          "milk",
+          "wheat",
+          "soy",
+          "sesame"
+        ]
+      },
+      "DietFlag": {
+        "type": "string",
+        "enum": [
+          "vegetarian",
+          "vegan",
+          "no_pork",
+          "no_beef",
+          "no_alcohol"
+        ]
+      },
+      "RecipeIngredient": {
+        "type": "object",
+        "properties": {
+          "ingredient": {
+            "$ref": "#/components/schemas/Ingredient"
+          },
+          "group": {
+            "$ref": "#/components/schemas/IngredientGroup"
+          },
+          "quantity": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "unit": {
+            "type": "string"
+          },
+          "prepNote": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "optional": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ingredient",
+          "group",
+          "quantity",
+          "unit",
+          "prepNote",
+          "optional"
+        ]
+      },
+      "Ingredient": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "category": {
+            "$ref": "#/components/schemas/IngredientCategory"
+          },
+          "allergenTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            }
+          },
+          "dietTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DietTag"
+            }
+          },
+          "isPantryStaple": {
+            "type": "boolean"
+          },
+          "searchKeyword": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "aliases",
+          "category",
+          "allergenTags",
+          "dietTags",
+          "isPantryStaple",
+          "searchKeyword"
+        ]
+      },
+      "IngredientCategory": {
+        "type": "string",
+        "enum": [
+          "vegetable",
+          "fruit",
+          "meat",
+          "seafood",
+          "egg_dairy",
+          "soy",
+          "staple",
+          "dry_goods",
+          "seasoning",
+          "other"
+        ]
+      },
+      "DietTag": {
+        "type": "string",
+        "enum": [
+          "pork",
+          "beef",
+          "alcohol"
+        ]
+      },
+      "IngredientGroup": {
+        "type": "string",
+        "enum": [
+          "main",
+          "side",
+          "seasoning"
+        ]
+      },
+      "RecipeStep": {
+        "type": "object",
+        "properties": {
+          "instruction": {
+            "type": "string",
+            "minLength": 1
+          },
+          "durationMinutes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "tip": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "instruction",
+          "durationMinutes",
+          "tip"
+        ]
+      },
+      "RecipePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecipeSummary"
+            }
+          },
+          "total": {
+            "type": "integer"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "page",
+          "pageSize"
+        ]
+      },
+      "RecipeSummary": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "cuisine": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20
+          },
+          "mealTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MealType"
+            },
+            "minItems": 1
+          },
+          "course": {
+            "$ref": "#/components/schemas/Course"
+          },
+          "difficulty": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "prepMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "cookMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "spiceLevel": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RecipeStatus"
+          },
+          "source": {
+            "$ref": "#/components/schemas/RecipeSource"
+          },
+          "allergenTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            }
+          },
+          "dietFlags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DietFlag"
+            }
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "name",
+          "cuisine",
+          "mealTypes",
+          "course",
+          "difficulty",
+          "prepMinutes",
+          "cookMinutes",
+          "spiceLevel",
+          "id",
+          "status",
+          "source",
+          "allergenTags",
+          "dietFlags",
+          "updatedAt"
+        ]
+      },
+      "RecipeInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "cuisine": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 20
+          },
+          "mealTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MealType"
+            },
+            "minItems": 1
+          },
+          "course": {
+            "$ref": "#/components/schemas/Course"
+          },
+          "difficulty": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "prepMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "cookMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "baseServings": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "flavorTags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 10
+            },
+            "maxItems": 10
+          },
+          "spiceLevel": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "equipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Equipment"
+            },
+            "maxItems": 7
+          },
+          "tips": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 1000
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 30
+                },
+                "group": {
+                  "$ref": "#/components/schemas/IngredientGroup"
+                },
+                "quantity": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0
+                },
+                "unit": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10
+                },
+                "prepNote": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "maxLength": 50
+                },
+                "optional": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "name",
+                "group",
+                "quantity",
+                "unit",
+                "prepNote",
+                "optional"
+              ]
+            },
+            "minItems": 1
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecipeStep"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "name",
+          "description",
+          "cuisine",
+          "mealTypes",
+          "course",
+          "difficulty",
+          "prepMinutes",
+          "cookMinutes",
+          "baseServings",
+          "flavorTags",
+          "spiceLevel",
+          "equipment",
+          "tips",
+          "ingredients",
+          "steps"
+        ]
+      },
+      "RecipeStatusChange": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "published",
+              "rejected",
+              "archived"
+            ]
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 500,
+            "default": null
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "IngredientUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "category": {
+            "$ref": "#/components/schemas/IngredientCategory"
+          },
+          "allergenTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Allergen"
+            }
+          },
+          "dietTags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DietTag"
+            }
+          },
+          "isPantryStaple": {
+            "type": "boolean"
+          },
+          "searchKeyword": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "SeedImportItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "batch": {
+            "type": "string"
+          },
+          "sourcePath": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "imported",
+              "failed",
+              "skipped"
+            ]
+          },
+          "recipeId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "batch",
+          "sourcePath",
+          "status",
+          "recipeId",
+          "error",
+          "createdAt"
+        ]
       }
     },
     "parameters": {}
@@ -1487,6 +2237,705 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/LlmUsageRow"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/recipes/{id}": {
+      "get": {
+        "tags": [
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "getRecipe",
+        "summary": "菜谱详情（已发布的菜，或为自己生成、待审核的菜）",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "菜谱详情",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/recipes": {
+      "get": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "listRecipes",
+        "summary": "菜谱列表（按名称、状态、来源、类别、餐次筛选，分页）",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 30
+            },
+            "required": false,
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/RecipeStatus"
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/RecipeSource"
+            },
+            "required": false,
+            "name": "source",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Course"
+            },
+            "required": false,
+            "name": "course",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/MealType"
+            },
+            "required": false,
+            "name": "mealType",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "required": false,
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "一页菜谱",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipePage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求不合法",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "createRecipe",
+        "summary": "新建菜谱（直接发布；食材按名称归一，不存在则新建）",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "已创建",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求不合法",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/recipes/{id}": {
+      "get": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "getRecipeForAdmin",
+        "summary": "菜谱详情（任意状态）",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "菜谱详情",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "updateRecipe",
+        "summary": "编辑菜谱（整体替换食材与步骤，重新派生过敏原与饮食标记）",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "已更新",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求不合法",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/recipes/{id}/status": {
+      "post": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "changeRecipeStatus",
+        "summary": "审核或改状态（发布、驳回、下架），可附备注",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeStatusChange"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "状态已更新",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Recipe"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求不合法",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/ingredients": {
+      "get": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "listIngredients",
+        "summary": "食材库（按名称或别名搜索）",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 30
+            },
+            "required": false,
+            "name": "q",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "食材列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ingredient"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/ingredients/{id}": {
+      "patch": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "updateIngredient",
+        "summary": "修改食材（过敏原、饮食标记变化会重新派生相关菜谱）",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IngredientUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "已更新",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ingredient"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "请求不合法",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "未登录或令牌无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "没有权限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "资源不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/seed-imports": {
+      "get": {
+        "tags": [
+          "admin",
+          "recipe"
+        ],
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "operationId": "listSeedImports",
+        "summary": "种子导入记录",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "imported",
+                "failed",
+                "skipped"
+              ]
+            },
+            "required": false,
+            "name": "status",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "导入记录",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SeedImportItem"
                   }
                 }
               }

@@ -1,10 +1,10 @@
-import type { RecipeInput } from '@mealmuse/shared';
 import { sql } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { composeServices } from '../../composition.js';
 import { createLlmGateway } from '../../providers/llm/gateway.js';
 import { createTestInfrastructure, resetDatabase } from '../../testing/database.js';
 import { chatReply, fakeOpenAi } from '../../testing/fake-llm.js';
+import { tomatoEgg } from '../../testing/recipes.js';
 import * as repo from './repo/recipe-repo.js';
 import { createRecipeService, saveRecipe } from './service/recipe-service.js';
 import { importSeed } from './service/seed/import-seed.js';
@@ -14,35 +14,6 @@ const infrastructure = createTestInfrastructure();
 const { identity } = composeServices(infrastructure);
 const service = createRecipeService(infrastructure);
 const { db } = infrastructure.database;
-
-const tomatoEgg: RecipeInput = {
-  name: '番茄炒蛋',
-  description: '家常菜',
-  cuisine: '家常',
-  mealTypes: ['lunch', 'dinner'],
-  course: 'veg',
-  difficulty: 2,
-  prepMinutes: 5,
-  cookMinutes: 10,
-  baseServings: 2,
-  flavorTags: ['酸甜'],
-  spiceLevel: 0,
-  equipment: [],
-  tips: null,
-  ingredients: [
-    { name: '西红柿', group: 'main', quantity: 360, unit: 'g', prepNote: '切块', optional: false },
-    { name: '鸡蛋', group: 'main', quantity: 3, unit: '个', prepNote: null, optional: false },
-    {
-      name: '盐',
-      group: 'seasoning',
-      quantity: null,
-      unit: '适量',
-      prepNote: null,
-      optional: false,
-    },
-  ],
-  steps: [{ instruction: '炒蛋', durationMinutes: 3, tip: null }],
-};
 
 beforeEach(() => resetDatabase(infrastructure));
 afterAll(() => infrastructure.database.close());
