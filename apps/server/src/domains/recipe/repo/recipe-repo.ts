@@ -161,6 +161,7 @@ export async function listRecipes(
   if (query.source) filters.push(eq(recipes.source, query.source));
   if (query.course) filters.push(eq(recipes.course, query.course));
   if (query.mealType) filters.push(arrayContains(recipes.mealTypes, [query.mealType]));
+  if (query.cuisine) filters.push(ilike(recipes.cuisine, `%${query.cuisine}%`));
   if (query.q) filters.push(ilike(recipes.name, `%${query.q}%`));
   const where = filters.length > 0 ? and(...filters) : undefined;
 

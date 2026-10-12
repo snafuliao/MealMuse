@@ -1,6 +1,7 @@
 import { parseArgs } from 'node:util';
 import { createServices } from '../composition.js';
 import { loadConfig } from '../config/env.js';
+import { SEED_DIR } from '../domains/recipe/config/seed.js';
 import { importSeed } from '../domains/recipe/service/seed/import-seed.js';
 
 /**
@@ -19,7 +20,7 @@ const { values } = parseArgs({
 const services = createServices(loadConfig());
 try {
   const summary = await importSeed(services.providers, {
-    seedDir: new URL('../../seed/howtocook', import.meta.url).pathname,
+    seedDir: SEED_DIR,
     ...(values.only ? { only: values.only } : {}),
     ...(values.limit ? { limit: Number(values.limit) } : {}),
     concurrency: Number(values.concurrency),

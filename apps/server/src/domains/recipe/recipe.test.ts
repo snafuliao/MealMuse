@@ -6,13 +6,12 @@ import { createTestInfrastructure, resetDatabase } from '../../testing/database.
 import { chatReply, fakeOpenAi } from '../../testing/fake-llm.js';
 import { tomatoEgg } from '../../testing/recipes.js';
 import * as repo from './repo/recipe-repo.js';
-import { createRecipeService, saveRecipe } from './service/recipe-service.js';
+import { saveRecipe } from './service/recipe-service.js';
 import { importSeed } from './service/seed/import-seed.js';
 import type { StructuredSeed } from './service/seed/structure.js';
 
 const infrastructure = createTestInfrastructure();
-const { identity } = composeServices(infrastructure);
-const service = createRecipeService(infrastructure);
+const { identity, recipe: service } = composeServices(infrastructure);
 const { db } = infrastructure.database;
 
 beforeEach(() => resetDatabase(infrastructure));

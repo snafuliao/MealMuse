@@ -105,6 +105,19 @@ const seedItems = createRoute({
   responses: { 200: json(z.array(SeedImportItemSchema), '导入记录'), ...errors(401, 403) },
 });
 
+const retrySeedItem = createRoute({
+  ...admin,
+  method: 'post',
+  path: '/admin/seed-imports/{id}/retry',
+  operationId: 'retrySeedImport',
+  summary: '重新导入单条失败的种子菜谱（会调用模型，约 30–90 秒）',
+  request: { params: IdParams },
+  responses: {
+    200: json(SeedImportItemSchema, '本次导入结果'),
+    ...errors(400, 401, 403, 404, 502, 503),
+  },
+});
+
 export function recipeRoutes(service: RecipeService) {
   return new OpenAPIHono<AppEnv>()
     .openapi(getRecipe, async (c) =>
@@ -130,5 +143,8 @@ export function recipeRoutes(service: RecipeService) {
     )
     .openapi(seedItems, async (c) =>
       c.json(await service.listSeedItems(c.req.valid('query').status), 200),
+    )
+    .openapi(retrySeedItem, async (c) =>
+      c.json(await service.retrySeedItem(c.req.valid('param').id), 200),
     );
 }

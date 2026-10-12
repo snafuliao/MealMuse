@@ -16,6 +16,11 @@ export async function findSeedItem(
   return row ?? null;
 }
 
+export async function findSeedItemById(db: DbExecutor, id: string): Promise<SeedItemRow | null> {
+  const [row] = await db.select().from(seedImportItems).where(eq(seedImportItems.id, id)).limit(1);
+  return row ?? null;
+}
+
 /** 每个源文件只保留最新一次导入结果。 */
 export async function recordSeedItem(
   db: DbExecutor,

@@ -1,10 +1,16 @@
-import { IngredientSchema, RecipePageSchema, RecipeSchema } from '@mealmuse/shared';
+import {
+  IngredientSchema,
+  RecipePageSchema,
+  RecipeSchema,
+  SeedImportItemSchema,
+} from '@mealmuse/shared';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { createApp } from '../../app.js';
 import { composeServices } from '../../composition.js';
 import { createTestInfrastructure, resetDatabase } from '../../testing/database.js';
 import { tomatoEgg } from '../../testing/recipes.js';
+import * as seedRepo from './repo/seed-repo.js';
 
 const infrastructure = createTestInfrastructure();
 const services = composeServices(infrastructure);
@@ -96,10 +102,21 @@ describe('recipe routes', () => {
     expect((await send('GET', `/api/recipes/${recipe.id}`, member)).status).toBe(404);
   });
 
-  it('lists seed import records by status', async () => {
+  it('lists seed import records and retries a failed one', async () => {
     const { admin } = await tokens();
-    const res = await send('GET', '/api/admin/seed-imports?status=failed', admin);
-    expect(res.status).toBe(200);
-    expect(await res.json()).toEqual([]);
+    const { db } = infrastructure.database;
+    const failed = { batch: 'b', recipeId: null, status: 'failed' as const, error: '网络错误' };
+    await seedRepo.recordSeedItem(db, { ...failed, sourcePath: 'dishes/soup/紫菜蛋花汤.md' });
+    const items = z
+      .array(SeedImportItemSchema)
+      .parse(await (await send('GET', '/api/admin/seed-imports?status=failed', admin)).json());
+    expect(items.map((i) => i.sourcePath)).toEqual(['dishes/soup/紫菜蛋花汤.md']);
+
+    // 测试库没有启用的模型供应商：重试会再次失败，并把原因记下来。
+    const retried = await send('POST', `/api/admin/seed-imports/${items[0]?.id}/retry`, admin);
+    expect(SeedImportItemSchema.parse(await retried.json())).toMatchObject({
+      status: 'failed',
+      error: expect.stringContaining('模型供应商'),
+    });
   });
 });

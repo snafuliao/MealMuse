@@ -11,10 +11,12 @@ import type {
 } from '@mealmuse/shared';
 import type { DbExecutor } from '../../../providers/database.js';
 import { AppError, type AuthUser } from '../../../providers/http.js';
-import type { Infrastructure } from '../../../providers/index.js';
+import type { Providers } from '../../../providers/index.js';
+import { SEED_DIR } from '../config/seed.js';
 import * as repo from '../repo/recipe-repo.js';
 import * as seedRepo from '../repo/seed-repo.js';
 import { deriveRecipeTags } from './derive.js';
+import { importSeed } from './seed/import-seed.js';
 
 /** 新建食材时可以带上的属性（种子结构化会给出；管理端手填时用默认值，事后在食材库修正）。 */
 export type IngredientAttributes = Pick<
@@ -165,7 +167,17 @@ export async function saveRecipe(
 
 export type RecipeService = ReturnType<typeof createRecipeService>;
 
-export function createRecipeService(providers: Pick<Infrastructure, 'database' | 'logger'>) {
+const toSeedItem = (row: seedRepo.SeedItemRow): SeedImportItem => ({
+  id: row.id,
+  batch: row.batch,
+  sourcePath: row.sourcePath,
+  status: row.status,
+  recipeId: row.recipeId,
+  error: row.error,
+  createdAt: row.createdAt.toISOString(),
+});
+
+export function createRecipeService(providers: Pick<Providers, 'database' | 'logger' | 'llm'>) {
   const { db } = providers.database;
 
   async function requireDetail(id: string): Promise<repo.RecipeDetailRows> {
@@ -255,11 +267,20 @@ export function createRecipeService(providers: Pick<Infrastructure, 'database' |
       return toIngredient(row);
     },
 
-    async listSeedItems(status?: SeedImportItem['status']): Promise<SeedImportItem[]> {
-      return (await seedRepo.listSeedItems(db, status)).map((row) => ({
-        ...row,
-        createdAt: row.createdAt.toISOString(),
-      }));
+    listSeedItems: async (status?: SeedImportItem['status']): Promise<SeedImportItem[]> =>
+      (await seedRepo.listSeedItems(db, status)).map(toSeedItem),
+
+    /** 重新导入单条失败或跳过的记录；已导入的不重做，以免覆盖管理端的修改。 */
+    async retrySeedItem(id: string): Promise<SeedImportItem> {
+      const item = await seedRepo.findSeedItemById(db, id);
+      if (!item) throw new AppError(404, 'seed_item_not_found', '导入记录不存在');
+      if (item.status === 'imported') {
+        throw new AppError(400, 'seed_item_imported', '这条已导入成功，请直接编辑对应菜谱');
+      }
+      await importSeed(providers, { seedDir: SEED_DIR, only: [item.sourcePath], concurrency: 1 });
+      const updated = await seedRepo.findSeedItem(db, item.sourcePath);
+      if (!updated) throw new Error(`seed item vanished: ${item.sourcePath}`);
+      return toSeedItem(updated);
     },
   };
 }
