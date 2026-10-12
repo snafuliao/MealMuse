@@ -22,6 +22,8 @@
     "build": "pnpm -r run build",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "ios:test": "scripts/ios-test.sh",
+    "ios:generate": "xcodegen generate --spec apps/ios/project.yml",
+    "ios:build": "pnpm ios:generate && xcodebuild build -project apps/ios/MealMuse.xcodeproj -scheme MealMuse -destination 'generic/platform=iOS Simulator' -derivedDataPath apps/ios/build -skipPackagePluginValidation CODE_SIGNING_ALLOWED=NO -quiet",
     "ios:format": "swift format --in-place --recursive apps/ios --configuration apps/ios/.swift-format",
     "ios:format:check": "swift format lint --strict --recursive apps/ios --configuration apps/ios/.swift-format",
     "openapi": "pnpm --filter @mealmuse/server openapi",
