@@ -28,6 +28,7 @@ MealMuse：基于 Agent 的「每天吃什么」助手——按个人口味与�
 | iOS 逻辑测试与格式 | `pnpm ios:test` / `pnpm ios:format:check` |
 | iOS 生成工程并构建 | `pnpm ios:build`（产物在 apps/ios/build，已 gitignore；模拟器内的 localhost:8787 即本机服务端） |
 | 改了接口后 | `pnpm openapi`（同时更新 iOS 端副本） |
+| 管理端登录令牌 / 导入 .env 中的模型配置 | `pnpm --filter @mealmuse/server admin:token --name 名字` / `pnpm --filter @mealmuse/server llm:import-env` |
 | 升级版本 | `pnpm version:bump <semver>` |
 
 ## 硬性约束（不可违反）
