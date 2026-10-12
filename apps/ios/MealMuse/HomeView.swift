@@ -1,20 +1,36 @@
 import MealMuseKit
 import SwiftUI
 
-struct ContentView: View {
+struct HomeView: View {
+    let user: CurrentUser
+    let session: SessionStore
     let healthService: HealthService
     @State private var statusText = "检查服务中…"
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 12) {
-                Text("今天吃什么？")
-                    .font(.largeTitle.bold())
+                Text("\(user.displayName)，今天吃什么？")
+                    .font(.title.bold())
+                    .multilineTextAlignment(.center)
                 Text(statusText)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
+            .padding()
             .navigationTitle("MealMuse")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button("退出登录", role: .destructive) {
+                            Task { await session.signOut() }
+                        }
+                    } label: {
+                        Image(systemName: "person.crop.circle")
+                    }
+                    .accessibilityLabel("账号")
+                }
+            }
         }
         .task { await refreshHealth() }
     }

@@ -1,7 +1,6 @@
 import Foundation
 import MealMuseAPI
 import OpenAPIRuntime
-import OpenAPIURLSession
 
 /// 服务健康状态在 App 内的表示，与网络层生成类型解耦。
 public struct ServerHealth: Equatable, Sendable {
@@ -20,10 +19,6 @@ public struct HealthService: Sendable {
 
     public init(client: any APIProtocol) {
         self.client = client
-    }
-
-    public init(serverURL: URL) {
-        self.init(client: Client(serverURL: serverURL, transport: URLSessionTransport()))
     }
 
     public func fetch() async throws -> ServerHealth {

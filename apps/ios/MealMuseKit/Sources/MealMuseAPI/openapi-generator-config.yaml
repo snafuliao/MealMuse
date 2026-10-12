@@ -3,3 +3,8 @@ generate:
   - client
 accessModifier: public
 namingStrategy: idiomatic
+# iOS 只需要面向用户的接口；管理端接口（tag: admin）不生成。
+filter:
+  tags:
+    - system
+    - identity

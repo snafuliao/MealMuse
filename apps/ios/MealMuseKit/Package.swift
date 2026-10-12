@@ -12,6 +12,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-openapi-generator", from: "1.7.0"),
         .package(url: "https://github.com/apple/swift-openapi-runtime", from: "1.8.0"),
         .package(url: "https://github.com/apple/swift-openapi-urlsession", from: "1.1.0"),
+        .package(url: "https://github.com/apple/swift-http-types", from: "1.3.0"),
     ],
     targets: [
         // 由服务端 openapi.json 生成的类型化客户端（Types 层），不手写。
@@ -30,6 +31,7 @@ let package = Package(
                 "MealMuseAPI",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
+                .product(name: "HTTPTypes", package: "swift-http-types"),
             ]
         ),
         .testTarget(
@@ -38,6 +40,7 @@ let package = Package(
                 "MealMuseKit",
                 "MealMuseAPI",
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+                .product(name: "HTTPTypes", package: "swift-http-types"),
             ]
         ),
     ]

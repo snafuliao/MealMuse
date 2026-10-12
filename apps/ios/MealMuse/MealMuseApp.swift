@@ -3,11 +3,19 @@ import SwiftUI
 
 @main
 struct MealMuseApp: App {
-    private let healthService = HealthService(serverURL: AppEnvironment.serverURL)
+    @State private var session: SessionStore
+    private let healthService: HealthService
+
+    init() {
+        let tokenStore = KeychainTokenStore()
+        let client = APIClientFactory.make(serverURL: AppEnvironment.serverURL, tokenStore: tokenStore)
+        _session = State(initialValue: SessionStore(client: client, tokenStore: tokenStore))
+        healthService = HealthService(client: client)
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView(healthService: healthService)
+            RootView(session: session, healthService: healthService)
         }
     }
 }

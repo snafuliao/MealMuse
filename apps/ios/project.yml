@@ -30,6 +30,10 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         TARGETED_DEVICE_FAMILY: "1"
+        # 模拟器用 ad-hoc 签名（"-"），不需要开发者账号；Keychain 依赖签名，不能关闭签名。
+        # 真机安装时在 Xcode 中改为自己的 Team（见 docs/exec-plans/active/v1-daily-recommendation.md Q4）。
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
       configs:
         Debug:
           MEALMUSE_SERVER_URL: http://localhost:8787
