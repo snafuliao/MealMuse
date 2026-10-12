@@ -96,7 +96,8 @@ export const layerDepsRule: Rule = {
     const violations: Violation[] = [];
     const files = listFiles(root, SERVER_SRC);
     for (const file of files) {
-      if (!/\.tsx?$/.test(file)) continue;
+      // 测试是集成层代码，需要导入组合根（app.ts / composition.ts），不受分层约束。
+      if (!/\.tsx?$/.test(file) || /\.test\.tsx?$/.test(file)) continue;
       const from = locate(file);
       if (from.kind === 'domain' && from.layer === null) {
         violations.push({

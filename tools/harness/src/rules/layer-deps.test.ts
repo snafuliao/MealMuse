@@ -50,6 +50,14 @@ describe('layerDepsRule', () => {
     expect(violation?.fix).toContain('依赖方向反了');
   });
 
+  it('exempts test files, which may import the composition root', () => {
+    const root = fixture({
+      'apps/server/src/domains/recipe/recipe.test.ts':
+        "import { createApp } from '../../app.js';\n",
+    });
+    expect(layerDepsRule.run(root)).toEqual([]);
+  });
+
   it('reports domain files outside a layer directory', () => {
     const root = fixture({ 'apps/server/src/domains/recipe/helpers.ts': 'export {};\n' });
     expect(layerDepsRule.run(root)).toHaveLength(1);
