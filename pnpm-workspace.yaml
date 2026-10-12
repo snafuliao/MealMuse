@@ -1,0 +1,5 @@
+packages:
+  - apps/server
+  - apps/admin-web
+  - packages/*
+  - tools/*

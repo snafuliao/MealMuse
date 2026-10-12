@@ -1,0 +1,8 @@
+pnpm-lock.yaml
+dist/
+coverage/
+apps/ios/
+docs/
+*.md
+apps/server/drizzle/
+apps/server/openapi.json

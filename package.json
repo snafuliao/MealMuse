@@ -1,0 +1,42 @@
+{
+  "name": "mealmuse",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
+    "dev:db": "docker compose up -d db",
+    "dev:server": "pnpm --filter @mealmuse/server dev",
+    "dev:admin": "pnpm --filter @mealmuse/admin-web dev",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . && pnpm lint:harness",
+    "lint:harness": "pnpm --filter @mealmuse/harness run check",
+    "build:shared": "pnpm --filter @mealmuse/shared build",
+    "typecheck": "pnpm build:shared && pnpm -r run typecheck",
+    "test": "pnpm build:shared && pnpm -r run test",
+    "build": "pnpm -r run build",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "ios:test": "scripts/ios-test.sh",
+    "ios:format": "swift format --in-place --recursive apps/ios --configuration apps/ios/.swift-format",
+    "ios:format:check": "swift format lint --strict --recursive apps/ios --configuration apps/ios/.swift-format",
+    "openapi": "pnpm --filter @mealmuse/server openapi",
+    "version:bump": "node scripts/bump-version.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "24.19.2",
+    "eslint": "10.12.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.13.0",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "5.0.4"
+  }
+}
