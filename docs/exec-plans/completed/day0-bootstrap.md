@@ -1,6 +1,6 @@
 # 执行计划：Day 0 项目奠基
 
-- **状态**：active
+- **状态**：completed（2026-10-12）
 - **创建日期**：2026-10-12
 - **负责人/驱动**：用户掌舵 / 智能体执行
 
@@ -26,7 +26,7 @@
 - [x] `ARCHITECTURE.md`
 - [x] `docs/` 其余目录与规范文件
 - [x] 第一批自定义 linter / 结构测试（至少 3 条）
-- [x] CI 门禁骨架：lint / test / build
+- [x] 门禁：lint / test / build（用户决定不用 GitHub CI，改为本地 `pnpm verify`，见 `docs/CI.md`）
 
 ## 待办调研（首版范围内，不阻塞 Day 0）
 - [x] 一键购买调研：把所需食材加入盒马等生鲜超市购物车的可行路径（开放接口、深链接 / Universal Links、iOS 快捷指令等）。结论见 `docs/design-docs/one-click-purchase-research.md`：首版做「采购清单＋跳转」，不做逆向接口与界面自动化。
@@ -54,6 +54,7 @@
 | 2026-10-12 | 装好 Xcode 27：App 外壳本地 xcodebuild 构建通过，无项目代码警告；修复 ios-test.sh 在完整 Xcode 下的空数组展开错误 | 还没有 iOS 模拟器运行时 |
 | 2026-10-12 | 安装 iOS 27 模拟器运行时；App 在 iPhone 18 Pro 模拟器中连上本地服务端，端到端验证通过；新增 `pnpm ios:generate` / `pnpm ios:build`；TD-1 已偿还 | CI 尚未运行（无远程仓库） |
 | 2026-10-12 | 推送到 GitHub（SSH）；首次 CI 两个 job 均未启动 | GitHub 账号因账单问题被锁定，需用户处理后重跑 |
+| 2026-10-12 | 用户决定不使用 GitHub CI：删除 workflow，新增 `pnpm verify` 与 pre-push 钩子；Day 0 全部完成，计划归档 | 无 |
 
 ## 关联
 - 需求：`docs/requirements.md`

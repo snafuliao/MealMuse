@@ -23,7 +23,8 @@ MealMuse：基于 Agent 的「每天吃什么」助手——按个人口味与�
 | 安装依赖 | `pnpm install` |
 | 启动本地数据库（端口 5433） | `pnpm dev:db`，然后在 `apps/server` 下运行 `pnpm db:migrate` |
 | 启动服务端 / 管理端 | `pnpm dev:server` / `pnpm dev:admin` |
-| 全部 TS 门禁 | `pnpm check`（格式、lint、harness、类型、测试、构建） |
+| **完整本地门禁（替代 CI）** | `pnpm verify`（TS 全部检查 + OpenAPI 一致性 + iOS 格式、测试、构建；pre-push 自动运行） |
+| 只跑 TS 门禁 | `pnpm check` |
 | iOS 逻辑测试与格式 | `pnpm ios:test` / `pnpm ios:format:check` |
 | iOS 生成工程并构建 | `pnpm ios:build`（产物在 apps/ios/build，已 gitignore；模拟器内的 localhost:8787 即本机服务端） |
 | 改了接口后 | `pnpm openapi`（同时更新 iOS 端副本） |
@@ -56,6 +57,6 @@ MealMuse：基于 Agent 的「每天吃什么」助手——按个人口味与�
 - 变更前先读相关 `docs/`，变更后同步更新文档；交互式决策确认后必须写进仓库文档。
 - 复杂工作先在 `docs/exec-plans/active/` 写计划，完成后移入 `docs/exec-plans/completed/`。
 - 提交按单一职责拆分，使用 Conventional Commits 前缀（`feat:` `fix:` `docs:` …），由 `.githooks/commit-msg` 校验；body 写清动机、方案与影响面。
-- 会话的最后一次提交必须通过全部本地门禁，并在 message 末尾注明 `[已测试]` 或 `[未测试]`。
+- 项目不使用 GitHub CI（`docs/CI.md`）：会话的最后一次提交必须通过 `pnpm verify`，并在 message 末尾注明 `[已测试]` 或 `[未测试]`。
 - 版本声明点（各 `package.json`、`apps/ios/project.yml`）必须一致，只能用 bump 脚本修改。
 - 用户提示词记录：每轮把用户提示词结构化后追加到仓库根的 prompt-history.txt（已 gitignore，只追加、不读取；少于 10 个字的不记录）。

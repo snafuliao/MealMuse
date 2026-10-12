@@ -9,12 +9,14 @@
 不适用。框架判定 = 其他类型，按规则 §3.5 不询问 Tauri 三问，本项不适用多平台打包与 Release 流水线。
 
 ## 3. 落地说明
-- 不生成 Tauri 打包发布流水线（`release.yml`）。
-- 基础门禁照建（规则 §13 阶段 A、B）：`.github/workflows/ci.yml`，push 到 main 和 PR 时触发。
-  - `typescript` job（ubuntu）：格式检查 → ESLint 与 harness → 类型检查 → 测试 → 构建 → 校验 openapi.json 与服务端代码一致。
-  - `ios` job（macOS）：swift format 检查 → MealMuseKit 测试 → XcodeGen 生成工程 → xcodebuild 构建模拟器版 App（不签名）。
-- 本地等价命令：`pnpm check`、`pnpm ios:test`，以及 XcodeGen 生成工程后运行同样的 xcodebuild 命令（即 `pnpm ios:build`；2026-10-12 已在本地 Xcode 27 构建并在模拟器运行通过）。
-- 远程仓库：https://github.com/snafuliao/MealMuse （2026-10-12 首次推送）。首次运行（run 38261228145）两个 job 均未启动：GitHub 账号因账单问题被锁定，与代码无关。账单解决后重跑即可。
+
+- **用户于 2026-10-12 明确放弃 GitHub CI**（账号没有余额，Actions 被账单锁定）。`.github/workflows/` 已删除，后续任何阶段都不得静默补建；如果要恢复，需要用户重新决定并记入本文件。
+- 门禁全部在本地执行：
+  - `pnpm verify`（`scripts/verify.sh`）：TS 的格式、ESLint、harness、类型、测试、构建 → OpenAPI 文档与服务端代码一致 → iOS 格式检查 → MealMuseKit 测试 → XcodeGen 生成工程并构建 App。
+  - `.githooks/pre-push` 在每次推送前自动运行 `pnpm verify`；紧急情况可以用 `git push --no-verify` 跳过，但跳过时必须在提交信息里注明。
+  - 每次会话的最后一次提交前也要运行 `pnpm verify`（`AGENTS.md` 会话纪律）。
+- 远程仓库 https://github.com/snafuliao/MealMuse 只用于托管代码，不运行 workflow。
+- 不生成 Tauri 打包发布流水线（框架判定为其他类型）。
 
 ## 4. 变更历史
 | 日期 | 变更 | 原因 |
@@ -22,3 +24,4 @@
 | 2026-10-12 | 建立本文件，判定为「其他」，跳过 Tauri 三问 | 用户确认技术栈为 SwiftUI + TS，未选 Tauri |
 | 2026-10-12 | 新增 `.github/workflows/ci.yml` 基础门禁 | Day 0 第 8 项 |
 | 2026-10-12 | 首次推送；CI 因账号账单锁定未运行 | 等待用户处理 GitHub 账单 |
+| 2026-10-12 | 删除 GitHub CI，改为本地 `pnpm verify` + pre-push 钩子 | 用户决定不使用 GitHub CI |

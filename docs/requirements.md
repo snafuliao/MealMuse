@@ -44,4 +44,4 @@
 | 2026-10-12 | Web 管理端首版负责模型配置与菜谱管理；菜谱数据库方案未定 | 已确认，数据库待定 |
 | 2026-10-12 | 菜谱库为主 + 模型补充；中转站 API（暂定 gpt-6.1-sol）；一天三餐可勾选；邀请码 + 设备令牌 | 已确认，见 `docs/product-specs/daily-recommendation.md` |
 
-技术栈五项已于 2026-10-12 交互确认，结论见 `docs/design-docs/core-beliefs.md`；框架判定为其他类型，不适用 §3.4，见 `docs/CI.md`。Day 0 进度见 `docs/exec-plans/active/day0-bootstrap.md`；首版开发计划见 `docs/exec-plans/active/v1-daily-recommendation.md`。
+技术栈五项已于 2026-10-12 交互确认，结论见 `docs/design-docs/core-beliefs.md`；框架判定为其他类型，不适用 §3.4，见 `docs/CI.md`。Day 0 记录见 `docs/exec-plans/completed/day0-bootstrap.md`；首版开发计划见 `docs/exec-plans/active/v1-daily-recommendation.md`。
