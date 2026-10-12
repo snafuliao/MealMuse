@@ -1,0 +1,21 @@
+{
+  "name": "@mealmuse/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "跨端共享的数据形状（Types 层）：zod schema 与由其推导的类型。",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "4.6.6"
+  }
+}
