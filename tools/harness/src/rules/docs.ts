@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { dirname, join, normalize } from 'node:path';
-import { lineOf, listFiles, readText } from '../files.js';
+import { IGNORED_DIRS, lineOf, listFiles, readText } from '../files.js';
 import type { Rule, Violation } from '../types.js';
 
 export const AGENTS_MAX_LINES = 100;
@@ -84,6 +84,16 @@ export const docsRule: Rule = {
       const text = readText(root, file);
       for (const { target, index, fromRoot } of referencedPaths(text)) {
         const resolved = fromRoot ? target : normalize(join(dirname(file), target));
+        if (resolved.split(/[\\/]/).some((segment) => IGNORED_DIRS.has(segment))) {
+          violations.push({
+            rule: this.id,
+            file,
+            line: lineOf(text, index),
+            message: `引用了构建产物或依赖目录：${target}（干净克隆与 CI 中不存在）`,
+            fix: '不要把 build、dist、node_modules 等生成目录写成路径引用，改用普通文字描述。',
+          });
+          continue;
+        }
         if (!existsSync(join(root, resolved))) {
           violations.push({
             rule: this.id,

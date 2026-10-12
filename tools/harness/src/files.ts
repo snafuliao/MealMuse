@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
-const IGNORED_DIRS = new Set([
+export const IGNORED_DIRS: ReadonlySet<string> = new Set([
   '.git',
   'node_modules',
   'dist',

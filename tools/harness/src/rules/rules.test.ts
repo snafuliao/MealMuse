@@ -52,6 +52,16 @@ describe('docsRule', () => {
     const messages = docsRule.run(root).map((v) => v.message);
     expect(messages).toHaveLength(3);
   });
+
+  it('flags references to build output even when it exists locally', () => {
+    const root = fixture({
+      ...complete,
+      'apps/ios/build/MealMuse.app/Info.plist': '',
+      'docs/DESIGN.md': 'artifacts live in `apps/ios/build/`\n',
+    });
+    const [violation] = docsRule.run(root);
+    expect(violation?.message).toContain('构建产物');
+  });
 });
 
 describe('versionsRule', () => {
