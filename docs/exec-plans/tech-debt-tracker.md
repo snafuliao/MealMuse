@@ -6,7 +6,7 @@
 
 | 编号 | 发现日期 | 描述 | 影响 | 偿还思路 |
 |---|---|---|---|---|
-| TD-1 | 2026-10-12 | 本机只装了 Command Line Tools，没有完整 Xcode，iOS App 外壳只能在 CI 上构建 | 本地无法运行模拟器，也无法验证 App 外壳 | 安装 Xcode 后，在本地运行 xcodebuild 和模拟器 |
+| TD-1 | 2026-10-12 | 已装 Xcode 27，App 外壳可在本地构建；但还没有 iOS 模拟器运行时 | 无法在模拟器里运行 App 做端到端验证 | 下载 iOS 模拟器运行时（`xcodebuild -downloadPlatform iOS`）后在模拟器里验证 |
 | TD-2 | 2026-10-12 | 还没有业务表，`drizzle-kit generate` 找不到 schema 文件会报错 | 添加第一张表之前无法用 generate | 添加第一张表时自然消除 |
 | TD-3 | 2026-10-12 | 规则 §13 阶段 C 的可观测性栈（LogQL / PromQL）和浏览器自动化技能尚未建设 | 智能体还不能自查运行时指标 | 在阶段 C 执行计划中落地 |
 

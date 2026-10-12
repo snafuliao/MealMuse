@@ -49,6 +49,7 @@
 |---|---|---|
 | 2026-10-12 | 需求确认、技术栈确认、框架判定完成并落盘 | 无 |
 | 2026-10-12 | Day 0 骨架完成：TS 门禁本地全绿，MealMuseKit 测试通过，服务端已连上本地 Postgres 端到端验证 | iOS App 外壳本地无法构建（无 Xcode），CI 尚未运行（无远程仓库） |
+| 2026-10-12 | 装好 Xcode 27：App 外壳本地 xcodebuild 构建通过，无项目代码警告；修复 ios-test.sh 在完整 Xcode 下的空数组展开错误 | 还没有 iOS 模拟器运行时 |
 
 ## 关联
 - 需求：`docs/requirements.md`

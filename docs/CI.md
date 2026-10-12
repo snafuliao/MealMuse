@@ -13,7 +13,7 @@
 - 基础门禁照建（规则 §13 阶段 A、B）：`.github/workflows/ci.yml`，push 到 main 和 PR 时触发。
   - `typescript` job（ubuntu）：格式检查 → ESLint 与 harness → 类型检查 → 测试 → 构建 → 校验 openapi.json 与服务端代码一致。
   - `ios` job（macOS）：swift format 检查 → MealMuseKit 测试 → XcodeGen 生成工程 → xcodebuild 构建模拟器版 App（不签名）。
-- 本地等价命令：`pnpm check` 与 `pnpm ios:test`。本机没有完整 Xcode，App 外壳只在 CI 上构建（见 `docs/exec-plans/tech-debt-tracker.md` TD-1）。
+- 本地等价命令：`pnpm check`、`pnpm ios:test`，以及 XcodeGen 生成工程后运行同样的 xcodebuild 命令（2026-10-12 已在本地 Xcode 27 构建通过）。
 - 仓库尚未推送到 GitHub，workflow 还没有实际运行过。
 
 ## 4. 变更历史
