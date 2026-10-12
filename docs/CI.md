@@ -1,0 +1,23 @@
+# CI 配置决定
+
+## 1. 框架判定
+- 判定结果：其他（非 Tauri）
+- 判定证据：`docs/design-docs/core-beliefs.md`「技术栈结论」——iOS 为 SwiftUI，服务端为 Hono（TypeScript），Web 管理端为 React + Vite；用户于 2026-10-12 交互确认。新建项目不做文件扫描判定（规则 §3.3）。
+- 判定日期：2026-10-12
+
+## 2. 交互确认记录（仅 Tauri 填写）
+不适用。框架判定 = 其他类型，按规则 §3.5 不询问 Tauri 三问，本项不适用多平台打包与 Release 流水线。
+
+## 3. 落地说明
+- 不生成 Tauri 打包发布流水线（`release.yml`）。
+- 基础门禁照建（规则 §13 阶段 A、B）：`.github/workflows/ci.yml`，push 到 main 和 PR 时触发。
+  - `typescript` job（ubuntu）：格式检查 → ESLint 与 harness → 类型检查 → 测试 → 构建 → 校验 openapi.json 与服务端代码一致。
+  - `ios` job（macOS）：swift format 检查 → MealMuseKit 测试 → XcodeGen 生成工程 → xcodebuild 构建模拟器版 App（不签名）。
+- 本地等价命令：`pnpm check` 与 `pnpm ios:test`。本机没有完整 Xcode，App 外壳只在 CI 上构建（见 `docs/exec-plans/tech-debt-tracker.md` TD-1）。
+- 仓库尚未推送到 GitHub，workflow 还没有实际运行过。
+
+## 4. 变更历史
+| 日期 | 变更 | 原因 |
+|---|---|---|
+| 2026-10-12 | 建立本文件，判定为「其他」，跳过 Tauri 三问 | 用户确认技术栈为 SwiftUI + TS，未选 Tauri |
+| 2026-10-12 | 新增 `.github/workflows/ci.yml` 基础门禁 | Day 0 第 8 项 |
