@@ -14,7 +14,8 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node --env-file-if-exists=../../.env ./node_modules/drizzle-kit/bin.cjs migrate",
     "admin:token": "tsx --env-file-if-exists=../../.env src/scripts/create-admin-token.ts",
-    "llm:import-env": "tsx --env-file-if-exists=../../.env src/scripts/import-llm-env.ts"
+    "llm:import-env": "tsx --env-file-if-exists=../../.env src/scripts/import-llm-env.ts",
+    "seed:import": "tsx --env-file-if-exists=../../.env src/scripts/import-seed.ts"
   },
   "dependencies": {
     "@hono/node-server": "2.1.4",
