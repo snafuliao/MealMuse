@@ -19,6 +19,13 @@ describe('checkEdge', () => {
     expect(checkEdge(d('recipe', 'runtime'), d('recipe', 'repo'))).toContain('service');
   });
 
+  it('lets table definitions reference other domains for foreign keys, and nothing more', () => {
+    const schema = (domain: string) => locate(`apps/server/src/domains/${domain}/repo/schema.ts`);
+    expect(checkEdge(schema('recipe'), schema('identity'))).toBeNull();
+    expect(checkEdge(d('recipe', 'repo'), schema('identity'))).toContain('跨领域');
+    expect(checkEdge(schema('recipe'), d('identity', 'repo'))).toContain('跨领域');
+  });
+
   it('limits cross-domain edges to types and service', () => {
     expect(checkEdge(d('plan', 'service'), d('recipe', 'service'))).toBeNull();
     expect(checkEdge(d('plan', 'repo'), d('recipe', 'types'))).toBeNull();

@@ -17,7 +17,7 @@ const FORBIDDEN_SAME_DOMAIN: ReadonlyArray<[Layer, Layer]> = [['runtime', 'repo'
 const PROVIDER_CONSUMERS: ReadonlySet<Layer> = new Set(['repo', 'service', 'runtime']);
 
 type Location =
-  | { kind: 'domain'; domain: string; layer: Layer | null }
+  | { kind: 'domain'; domain: string; layer: Layer | null; file: string }
   | { kind: 'providers' }
   | { kind: 'config' }
   | { kind: 'other' };
@@ -26,7 +26,7 @@ export function locate(file: string): Location {
   if (file.startsWith(`${DOMAINS}/`)) {
     const [domain = '', layer] = file.slice(DOMAINS.length + 1).split('/');
     const isLayer = (LAYERS as readonly string[]).includes(layer ?? '');
-    return { kind: 'domain', domain, layer: isLayer ? (layer as Layer) : null };
+    return { kind: 'domain', domain, layer: isLayer ? (layer as Layer) : null, file };
   }
   if (file.startsWith(`${PROVIDERS}/`)) return { kind: 'providers' };
   if (file.startsWith(`${CONFIG}/`)) return { kind: 'config' };
@@ -46,6 +46,8 @@ export function relativeImports(source: string): Array<{ specifier: string; line
   }
   return result;
 }
+
+const isTableSchema = (file: string) => /\/repo\/schema(\.[jt]s)?$/.test(file);
 
 /** 判定一条依赖边是否允许；允许返回 null，否则返回修复指令。 */
 export function checkEdge(from: Location, to: Location): string | null {
@@ -86,7 +88,9 @@ export function checkEdge(from: Location, to: Location): string | null {
 
   if (to.layer === 'types') return null;
   if (to.layer === 'service' && (from.layer === 'service' || from.layer === 'runtime')) return null;
-  return `跨领域只允许依赖对方的 types，或在 service / runtime 中调用对方的 service；不能依赖 ${to.domain}/${to.layer}。`;
+  // 外键需要引用对方的表定义：只允许表定义文件之间互相引用。
+  if (isTableSchema(from.file) && isTableSchema(to.file)) return null;
+  return `跨领域只允许依赖对方的 types、在 service / runtime 中调用对方的 service，或在 repo/schema.ts 中引用对方的表定义（外键）；不能依赖 ${to.domain}/${to.layer}。`;
 }
 
 export const layerDepsRule: Rule = {

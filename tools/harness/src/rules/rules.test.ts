@@ -53,6 +53,11 @@ describe('docsRule', () => {
     expect(messages).toHaveLength(3);
   });
 
+  it('skips third-party seed markdown', () => {
+    const root = fixture({ ...complete, 'apps/server/seed/x/dish.md': '![](./missing.jpg)\n' });
+    expect(docsRule.run(root)).toEqual([]);
+  });
+
   it('flags references to build output even when it exists locally', () => {
     const root = fixture({
       ...complete,

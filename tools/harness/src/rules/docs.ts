@@ -25,8 +25,11 @@ export const REQUIRED_DOCS = [
   'docs/exec-plans/completed',
 ];
 
-/** 施工图本身大量出现模板路径（<slug>.md 之类），不做链接校验。 */
-const LINK_CHECK_EXEMPT = new Set(['docs/HARNESS-RULES.md']);
+/**
+ * 不做链接校验的路径前缀：施工图本身大量出现模板路径（<slug>.md 之类）；
+ * 种子数据是原样保留的第三方 Markdown（图片未下载）。
+ */
+const LINK_CHECK_EXEMPT = ['docs/HARNESS-RULES.md', 'apps/server/seed/'];
 
 const MARKDOWN_LINK = /\[[^\]]*\]\(([^)\s]+)\)/g;
 /** 反引号中形如仓库路径的引用，例如 `docs/CI.md`、`apps/server/src/`。 */
@@ -80,7 +83,8 @@ export const docsRule: Rule = {
     }
 
     for (const file of listFiles(root)) {
-      if (!file.endsWith('.md') || LINK_CHECK_EXEMPT.has(file)) continue;
+      if (!file.endsWith('.md') || LINK_CHECK_EXEMPT.some((prefix) => file.startsWith(prefix)))
+        continue;
       const text = readText(root, file);
       for (const { target, index, fromRoot } of referencedPaths(text)) {
         const resolved = fromRoot ? target : normalize(join(dirname(file), target));
