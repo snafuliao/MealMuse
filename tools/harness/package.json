@@ -1,0 +1,15 @@
+{
+  "name": "@mealmuse/harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "自定义 linter 与结构测试：把仓库的硬约束编码为可机械执行的检查。",
+  "type": "module",
+  "scripts": {
+    "check": "tsx src/cli.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "4.6.6"
+  }
+}
