@@ -57,7 +57,11 @@ describe('model provider configuration', () => {
   });
 
   it('probes the provider and stores capabilities', async () => {
-    const fake = fakeOpenAi([chatReply('ok'), chatReply('{"ok":true}'), toolReply('get_time')]);
+    const fake = fakeOpenAi([
+      chatReply('ok'),
+      chatReply('{"dishName":"番茄炒蛋","servingCount":2}'),
+      toolReply('get_time'),
+    ]);
     const service = createModelConfigService(infrastructure, { fetchImpl: fake.fetch });
     const created = await service.create(input);
     const tested = await service.testConnection(created.id);

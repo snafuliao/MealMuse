@@ -1,9 +1,19 @@
 import type { ProviderCapabilities } from '@mealmuse/shared';
 import { z } from 'zod';
-import { ChatCompletionSchema, EmbeddingResponseSchema, postJson, type FetchLike } from './http.js';
+import {
+  ChatCompletionSchema,
+  EmbeddingResponseSchema,
+  parseJsonContent,
+  postJson,
+  type FetchLike,
+} from './http.js';
 import type { LlmConfig } from './types.js';
 
-const OkSchema = z.object({ ok: z.boolean() });
+/**
+ * 字段名只出现在 schema 里、不出现在提示词里：中转站若没有把 schema 转给模型（实测经中转的
+ * claude-haiku-5-5 会这样），模型猜不出字段名，探测就会失败，Gateway 随后改走「提示词附 schema」的降级路径。
+ */
+const ProbeSchema = z.object({ dishName: z.string(), servingCount: z.int() });
 
 /**
  * 「测试连接」：依次探测对话、结构化输出、工具调用、Embedding。
@@ -38,13 +48,13 @@ export async function probeCapabilities(
 
   const structuredOk = await attempt('结构化输出', async () => {
     const res = await chat({
-      messages: [{ role: 'user', content: '输出 {"ok": true}' }],
+      messages: [{ role: 'user', content: '按给定的 JSON Schema 描述一道两人份的番茄炒蛋。' }],
       response_format: {
         type: 'json_schema',
-        json_schema: { name: 'probe', schema: z.toJSONSchema(OkSchema) },
+        json_schema: { name: 'probe', schema: z.toJSONSchema(ProbeSchema) },
       },
     });
-    const parsed = OkSchema.safeParse(JSON.parse(res.choices[0]?.message.content ?? 'null'));
+    const parsed = ProbeSchema.safeParse(parseJsonContent(res.choices[0]?.message.content ?? ''));
     if (!parsed.success) throw new Error('返回内容不符合 JSON Schema');
     return true;
   });

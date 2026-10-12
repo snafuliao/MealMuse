@@ -91,3 +91,20 @@ export async function postJson<T>(
   }
   throw lastError;
 }
+
+const FENCED_JSON = /^```(?:json)?\s*\n([\s\S]*?)\n?```$/;
+
+/**
+ * 解析模型回复里的 JSON。部分中转站（如经 OpenAI 兼容层转发的 Claude）会忽略 response_format，
+ * 把 JSON 包在 Markdown 代码块里；这里去掉外层代码块再解析，结果仍由调用方的 zod schema 校验。
+ * 解析失败返回 null。
+ */
+export function parseJsonContent(content: string): unknown {
+  const trimmed = content.trim();
+  const body = FENCED_JSON.exec(trimmed)?.[1] ?? trimmed;
+  try {
+    return JSON.parse(body);
+  } catch {
+    return null;
+  }
+}

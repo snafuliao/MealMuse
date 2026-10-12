@@ -48,6 +48,16 @@ describe('completeJson', () => {
     expect(records).toMatchObject([{ purpose: 'recommend', status: 'ok', inputTokens: 10 }]);
   });
 
+  it('accepts JSON wrapped in a Markdown code fence', async () => {
+    const { llm } = gateway([chatReply('```json\n{"name":"紫菜蛋花汤","minutes":15}\n```')]);
+    const dish = await llm.completeJson({
+      purpose: 'structure_seed',
+      messages: [{ role: 'user', content: '结构化' }],
+      schema: { name: 'dish', zod: DishSchema },
+    });
+    expect(dish).toEqual({ name: '紫菜蛋花汤', minutes: 15 });
+  });
+
   it('asks the model to fix output that does not match the schema, once', async () => {
     const { llm, calls } = gateway([
       chatReply('{"name":"番茄炒蛋"}'),
@@ -146,7 +156,7 @@ describe('probeCapabilities', () => {
   it('reports each capability independently', async () => {
     const fake = fakeOpenAi([
       chatReply('ok'),
-      chatReply('{"ok":true}'),
+      chatReply('{"dishName":"番茄炒蛋","servingCount":2}'),
       chatReply('现在是中午'), // 没有发起工具调用
       { json: { data: [{ index: 0, embedding: [0.1, 0.2, 0.3] }] } },
     ]);
@@ -159,5 +169,16 @@ describe('probeCapabilities', () => {
       embeddingDimensions: 3,
     });
     expect(result.errors).toEqual([expect.stringContaining('工具调用')]);
+  });
+
+  it('marks structured output unsupported when the relay ignores the schema', async () => {
+    const fake = fakeOpenAi([
+      chatReply('ok'),
+      chatReply('```json\n{"name":"番茄炒蛋","servings":2}\n```'), // 字段名是猜的
+      chatReply('现在是中午'),
+      { json: { data: [{ index: 0, embedding: [0.1] }] } },
+    ]);
+    const result = await probeCapabilities(config, fake.fetch);
+    expect(result.structuredOutput).toBe(false);
   });
 });

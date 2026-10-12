@@ -1,7 +1,13 @@
 import type { LlmPurpose } from '@mealmuse/shared';
 import { z } from 'zod';
 import type { Logger } from '../logger.js';
-import { ChatCompletionSchema, EmbeddingResponseSchema, postJson, type FetchLike } from './http.js';
+import {
+  ChatCompletionSchema,
+  EmbeddingResponseSchema,
+  parseJsonContent,
+  postJson,
+  type FetchLike,
+} from './http.js';
 import { LlmError, type ChatMessage, type LlmCallRecord, type LlmConfig } from './types.js';
 
 export type CompleteRequest<T> = {
@@ -146,13 +152,7 @@ export function createLlmGateway(deps: LlmGatewayDeps): LlmGateway {
           });
           inputTokens += result.inputTokens;
           outputTokens += result.outputTokens;
-          let candidate: unknown;
-          try {
-            candidate = JSON.parse(result.content);
-          } catch {
-            candidate = null;
-          }
-          const parsed = request.schema.zod.safeParse(candidate);
+          const parsed = request.schema.zod.safeParse(parseJsonContent(result.content));
           if (parsed.success) return { value: parsed.data, inputTokens, outputTokens };
           messages = [
             ...messages,
