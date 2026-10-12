@@ -4,12 +4,13 @@ import { auth, isUnauthenticated } from './api/client';
 import { LoginPage } from './features/auth/LoginPage';
 import { InvitesPage } from './features/invites/InvitesPage';
 import { ModelProvidersPage } from './features/model-config/ModelProvidersPage';
+import { RecipesPage } from './features/recipes/RecipesPage';
 import { HealthBadge } from './features/system/HealthBadge';
 
 const TABS = [
   { id: 'models', label: '模型配置' },
   { id: 'invites', label: '邀请与用户' },
-  { id: 'recipes', label: '菜谱管理', disabled: true },
+  { id: 'recipes', label: '菜谱管理' },
 ] as const;
 type TabId = (typeof TABS)[number]['id'];
 
@@ -43,15 +44,17 @@ export function App() {
             key={item.id}
             type="button"
             className={item.id === tab ? 'active' : ''}
-            disabled={'disabled' in item}
-            title={'disabled' in item ? '里程碑 M2 实现' : undefined}
             onClick={() => setTab(item.id)}
           >
             {item.label}
           </button>
         ))}
       </nav>
-      <main>{tab === 'models' ? <ModelProvidersPage /> : <InvitesPage />}</main>
+      <main>
+        {tab === 'models' && <ModelProvidersPage />}
+        {tab === 'invites' && <InvitesPage />}
+        {tab === 'recipes' && <RecipesPage />}
+      </main>
     </div>
   );
 }

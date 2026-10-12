@@ -87,7 +87,9 @@ label {
   font-size: 0.875rem;
   color: var(--muted);
 }
-input {
+input,
+select,
+textarea {
   font: inherit;
   padding: 0.45rem 0.6rem;
   border: 1px solid var(--border);
@@ -124,6 +126,7 @@ button.danger {
   border-color: var(--fail);
 }
 button.link {
+  white-space: nowrap;
   background: none;
   border: none;
   color: var(--accent);
@@ -203,6 +206,7 @@ td {
 th {
   color: var(--muted);
   font-weight: 500;
+  white-space: nowrap;
 }
 .login {
   max-width: 420px;
@@ -214,4 +218,78 @@ th {
 .loading {
   padding: 2rem;
   color: var(--muted);
+}
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.875rem;
+}
+legend {
+  color: var(--muted);
+}
+label.inline {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text);
+}
+.grow {
+  flex: 1;
+}
+.narrow {
+  width: 5.5rem;
+}
+.form.wide {
+  max-width: none;
+}
+.subnav {
+  display: flex;
+  gap: 0.25rem;
+  margin: 1rem 0 0.75rem;
+}
+.subnav button {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.subnav button.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.filters {
+  align-items: end;
+}
+.pager {
+  align-items: center;
+}
+table.rows {
+  border: none;
+}
+table.rows input {
+  width: 100%;
+  box-sizing: border-box;
+}
+table.rows input[type='checkbox'] {
+  width: auto;
+}
+.steps {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.steps textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+.editor h3 {
+  margin: 1rem 0 0.5rem;
+}
+pre[role='alert'] {
+  white-space: pre-wrap;
+  font-size: 0.85rem;
 }

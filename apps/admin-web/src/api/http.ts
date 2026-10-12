@@ -12,7 +12,7 @@ export class ApiError extends Error {
   }
 }
 
-type Method = 'GET' | 'POST' | 'PATCH' | 'DELETE';
+type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 /**
  * 管理端唯一的请求入口：同源 Cookie 鉴权；成功响应按 schema 解析，失败统一抛 ApiError。

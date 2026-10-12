@@ -67,16 +67,19 @@ export async function listIngredients(
   db: DbExecutor,
   q: string | undefined,
 ): Promise<IngredientRow[]> {
-  return db
-    .select()
-    .from(ingredients)
-    .where(
-      q
-        ? or(ilike(ingredients.name, `%${q}%`), arrayContains(ingredients.aliases, [q]))
-        : undefined,
-    )
-    .orderBy(asc(ingredients.category), asc(ingredients.name))
-    .limit(500);
+  return (
+    db
+      .select()
+      .from(ingredients)
+      .where(
+        q
+          ? or(ilike(ingredients.name, `%${q}%`), arrayContains(ingredients.aliases, [q]))
+          : undefined,
+      )
+      .orderBy(asc(ingredients.category), asc(ingredients.name))
+      // 管理端编辑菜谱时用全量食材名做下拉候选；种子导入后约数百种。
+      .limit(2000)
+  );
 }
 
 /** 用到某个食材的菜谱，食材属性变化后需要重新派生它们的过敏原与饮食标记。 */
