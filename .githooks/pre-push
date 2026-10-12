@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# 项目不使用 GitHub CI，推送前运行完整本地门禁（docs/CI.md）。紧急情况可用 git push --no-verify 跳过。
+set -euo pipefail
+exec "$(git rev-parse --show-toplevel)/scripts/verify.sh"
