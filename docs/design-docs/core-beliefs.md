@@ -25,6 +25,16 @@
 | 包管理器 | TS：pnpm workspace；iOS：Swift Package Manager | 用户确认 |
 | 构建方式 | TS：tsc / Vite；iOS：XcodeGen 生成工程（`.xcodeproj` 不入库）+ xcodebuild | 用户确认 |
 
+### 首版设计决定（2026-10-12 用户确认）
+
+| 项 | 结论 | 来源 |
+|---|---|---|
+| 大模型接入 | 用户提供的中转站 API，暂定模型 `gpt-6.1-sol`；服务端只实现 OpenAI 兼容接口，供应商在管理端配置 | 用户回答 |
+| 菜谱来源 | 自建菜谱库为主（种子来自 HowToCook，Unlicense），模型生成为补充，审核后入公共库 | 用户选择 |
+| 账号 | 邀请码 + 设备令牌 | 用户选择 |
+
+详见 `docs/design-docs/recommendation-agent.md` 与 `docs/design-docs/data-model.md`。
+
 ### 由结论直接推出的约束
 
 - 服务端通过 OpenAPI 描述接口，Swift 客户端代码由 OpenAPI 生成，保证两种语言的接口一致。
