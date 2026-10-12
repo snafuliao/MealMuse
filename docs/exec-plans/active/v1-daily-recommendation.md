@@ -1,6 +1,6 @@
 # 执行计划：首版——每日推荐与饮食问答
 
-- **状态**：active（M1 完成；M2 进行中，见文末「交接：下一步」）
+- **状态**：active（M1、M2 完成；下一步 M3，见文末「交接：下一步」）
 - **创建日期**：2026-10-12
 - **负责人/驱动**：用户掌舵 / 智能体执行
 
@@ -27,11 +27,11 @@
 ### M2 菜谱库
 - [x] recipe 领域表结构与迁移；食材库；派生过敏原与饮食标记（service/derive.ts）
 - [x] HowToCook 种子导入脚本：规则解析（373 个文件全部可解析）+ 模型结构化 + 校验 + 导入记录；结构化结果缓存在 seed_import_items，重试不重复调用模型
-- [ ] 结构化模型选型：用 gpt-5.4-mini 试 3 道，与 gpt-6.1-sol 的结果对比（用户 2026-10-12 选择「换个便宜模型导入」）
-- [ ] 全量导入（约 360 道；gpt-6.1-sol 实测每道约 60 秒、约 6k 输入 + 2k 输出 token）
+- [x] 结构化模型选型：gpt-5.4-mini 在中转站持续 429/503 无法使用；用户改用新中转站上的 claude-haiku-5-5，3 道对比准确度不低于 gpt-6.1-sol、速度约快一倍（见决策日志）
+- [x] 全量导入（claude-haiku-5-5，并发 4）：结果见进度日志
 - [x] ~~Embedding 生成与 HNSW 索引~~：中转站没有 Embedding 模型（2026-10-12 实测），改用 pg_trgm 名称检索 + 标签/食材重合度排序
-- [ ] recipe runtime 路由：管理端菜谱列表 / 详情 / 新建 / 编辑 / 审核（改状态）、食材库列表与修改、导入记录；用户端 GET /recipes/{id}（可见性规则已在 service 实现）
-- [ ] 管理端：菜谱列表、编辑、审核队列、食材库、导入记录（「菜谱管理」标签页目前是禁用状态）
+- [x] recipe runtime 路由：管理端菜谱列表（含菜系筛选）/ 详情 / 新建 / 编辑 / 审核（改状态）、食材库列表与修改、导入记录与单条重试；用户端 GET /recipes/{id}
+- [x] 管理端「菜谱管理」：菜谱列表与编辑、审核队列、食材库、导入记录；浏览器面板中实测
 
 ### M3 口味档案与每日推荐
 - [ ] profile 领域与接口；iOS 引导填写与档案编辑
@@ -76,6 +76,10 @@
 | 2026-10-12 | 厨具改为固定枚举（烤箱、空气炸锅、蒸锅、电饭煲、高压锅、微波炉、料理机） | 厨具是硬约束，需要与档案逐项比对，自由文本无法可靠匹配 |
 | 2026-10-12 | Gateway 支持单次调用覆盖超时；种子结构化用 180 秒 | 实测整道菜谱结构化超过 30 秒默认超时 |
 | 2026-10-12 | 分层检查允许 repo/schema.ts 之间互相引用 | 外键需要引用对方的表定义；其余跨领域 repo 依赖仍禁止 |
+| 2026-10-12 | 种子结构化改用新中转站（liuguang.ai）上的 claude-haiku-5-5，全量导入 | 用户选择。3 道对比：Haiku 与原文一致；gpt-6.1-sol 给西红柿炒鸡蛋加了原文没有的生抽（误标大豆、小麦）。Haiku 每道 30–50 秒、约 0.0055 积分；gpt-5.4-mini 当天 429/503 不可用 |
+| 2026-10-12 | Gateway 解析前去掉 Markdown 代码块；结构化输出探测改用只在 schema 里出现的字段名 | 新中转站转发 Claude 时不传 schema，旧探测误报「支持」，导致 3 道全部 invalid_output；修复后走「提示词附 schema」降级路径一次成功 |
+| 2026-10-12 | 管理端单条重试只允许失败或跳过的导入记录 | 已导入的菜可能被人工改过，重做会覆盖；批量强制重导仍用命令行 --force |
+| 2026-10-12 | 种子重导按 source_ref 找回原菜谱 | 失败记录会清空 recipe_id，之前导致强制重导出现重复菜谱 |
 
 ## 进度日志
 
@@ -84,13 +88,14 @@
 | 2026-10-12 | 完成首版产品规格、数据模型与 Agent 设计 | 等待用户评审；Q1–Q4 未决 |
 | 2026-10-12 | M1 完成：账号、模型配置、LLM Gateway、管理端三个页面、iOS 注册与登录恢复；服务端 26 个测试、管理端 5 个、iOS 10 个；浏览器与模拟器中实测通过 | 中转站 Key 未配置，真实模型能力未探测（TD-6） |
 | 2026-10-12 | M2 进行中：菜谱领域（表结构、派生标记、服务）、种子下载与导入流水线完成；试导入 3 道，成功 2 道（西红柿炒鸡蛋、紫菜蛋花汤），宫保鸡丁因中转站网络错误失败，重跑会自动重试 | 等待选定结构化模型后全量导入 |
+| 2026-10-12 | M2 完成：claude-haiku-5-5 全量导入 361 道（加试导入 3 道共 364 道已发布，跳过 9 个非菜品文件，失败 0，无重试），625 种食材；共 200 万输入 + 170 万输出 token，按账单单价估算约 1.94 积分，并发 4 用时 34 分钟。recipe 路由与管理端「菜谱管理」完成并在浏览器面板实测；pnpm verify 全绿（TS 83 个测试、Swift 10 个、iOS 构建） | 食材归一（TD-8）与厨具标注（TD-10）需在 M3 前处理 |
 
 ## 交接：下一步（给接手的会话）
 
-1. 先读 `AGENTS.md`，再读本计划与 `docs/design-docs/data-model.md`。本地环境：`pnpm dev:db`（Postgres 在 5433）；`.env` 已配好中转站与 MODEL_SECRETS_KEY，数据库里已启用供应商「中转站」（gpt-6.1-sol）。
-2. **结构化模型对比**：在管理端或用 `llm:import-env` 改 LLM_CHAT_MODEL 新建一个 gpt-5.4-mini 供应商并启用，然后用 `pnpm --filter @mealmuse/server seed:import --force --only dishes/vegetable_dish/西红柿炒鸡蛋.md --only dishes/soup/紫菜蛋花汤.md --only dishes/meat_dish/宫保鸡丁/宫保鸡丁.md` 重新结构化，对比数据库中的食材、用量、过敏原与 gpt-6.1-sol 的结果（gpt-6.1-sol 的结果见上面进度日志）。把对比结论和用户的选择记入决策日志。
-3. **全量导入**前向用户确认用量（选定模型后估算 token），然后后台运行 `pnpm --filter @mealmuse/server seed:import --concurrency 4`；失败条目重跑即可。
-4. 完成 M2 剩余两项：recipe runtime 路由（先 `pnpm openapi` 更新契约），管理端「菜谱管理」页面；按 M1 的方式在浏览器中实测。
+1. 先读 `AGENTS.md`，再读本计划、`docs/design-docs/data-model.md` 与 `docs/design-docs/recommendation-agent.md`。本地环境：`pnpm dev:db`（Postgres 在 5433）；`pnpm dev:server`、`pnpm dev:admin`（`.claude/launch.json` 有 admin-web 配置）。管理员令牌用 `pnpm --filter @mealmuse/server admin:token --name 站长` 重新签发。
+2. 模型供应商：当前启用「中转站 B（claude-haiku-5-5）」（liuguang.ai，不支持原生结构化输出，走降级路径）；「中转站」（jojocode.com，gpt-6.1-sol）可用、已复测；「中转站（gpt-5.4-mini）」探测失败，未启用。M3 推荐用哪个模型，需要先对比再请用户确认。
+3. M3 开工前先处理 TD-8（食材合并）与 TD-10（厨具抽查），它们直接影响硬约束过滤的正确性。
+4. 然后按上面 M3 的拆解实现：profile 领域与 iOS 档案页 → plan 推荐流水线（`docs/design-docs/recommendation-agent.md`）→ 换菜与反馈 → iOS 今日推荐与菜谱详情 → 约束评测。
 5. 每个里程碑结束：`pnpm verify` 全绿、更新本计划与 QUALITY_SCORE、按单一职责提交、在用户终端中推送（沙箱 shell 无 GitHub 凭据，推送用终端面板）。
 
 ## 关联

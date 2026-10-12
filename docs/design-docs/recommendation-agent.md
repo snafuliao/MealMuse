@@ -76,6 +76,13 @@
 
 对话、JSON Schema 结构化输出、工具调用可用；**没有 Embedding 模型**，第 3 节的偏好相似度按 Jaccard 方案实现。可用对话模型包括 gpt-6.1-sol、gpt-5.4-mini 等 12 个。
 
+2026-10-12 用户新增第二个中转站（liuguang.ai，同为 New API 网关），种子结构化改用其上的 `claude-haiku-5-5`：
+
+- 这个中转站转发 Claude 时**不把 response_format 的 JSON Schema 交给模型**，模型会把 JSON 包在 Markdown 代码块里，字段名靠猜。为此：Gateway 解析前先去掉外层代码块；「测试连接」的结构化输出探测改用只出现在 schema 里的字段名，探测失败时 Gateway 走 json_object 加「提示词附 schema」的降级路径（实测此路径下 Haiku 一次成功）。
+- 原中转站（jojocode.com）的 gpt-6.1-sol 用新探测复测仍为「支持结构化输出」。
+- 计费：Haiku 约 0.52 积分 / 百万 token（输入输出合计，中转站账单），每道种子菜谱约 0.0055 积分。
+- 同一中转站的 gpt-5.4-mini 当天持续返回 429 / 503（上游饱和），未能使用。
+
 ## 7. 原待确认项（已由探测回答）
 
 1. 中转站的 Base URL、接口格式（Chat Completions 还是 Responses），以及 `gpt-6.1-sol` 是否支持 JSON Schema 结构化输出和工具调用。

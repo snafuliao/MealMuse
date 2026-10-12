@@ -54,6 +54,7 @@ types → config → repo → service → runtime
 | system | 健康检查 |
 | identity | 邀请码、设备令牌、管理端登录 |
 | model-config | 模型供应商配置（Key 加密存储）、能力探测、调用统计 |
+| recipe | 菜谱库与食材库、过敏原与饮食标记派生、种子导入（HowToCook）、管理端菜谱管理与用户端菜谱详情 |
 
 `Providers` 提供：config、logger（pino）、database（Drizzle + postgres.js）、secrets（AES-256-GCM）、llm（OpenAI 兼容的 LLM Gateway，见 `docs/design-docs/recommendation-agent.md`）。
 

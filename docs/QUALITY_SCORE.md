@@ -6,10 +6,10 @@
 |---|---|---|---|---|---|
 | server: system（健康检查） | B | B | A | B | 只有单元测试 |
 | server: identity | A | B | A | B | 真实数据库集成测试覆盖注册、撤销、越权 |
-| server: model-config + LLM Gateway | A | B | A | B | Gateway 用假接口测重试与纠错；真实中转站未探测（TD-6） |
-| server: recipe | A | B | A | B | 真实数据库集成测试覆盖归一、派生、可见性、种子导入与缓存复用；还没有 HTTP 路由 |
-| admin-web | B | B | A | — | 登录、模型配置、邀请与用户；浏览器中实测通过 |
+| server: model-config + LLM Gateway | A | B | A | B | Gateway 用假接口测重试、纠错、代码块包裹的 JSON；两个真实中转站均已探测 |
+| server: recipe | A | B | A | B | 真实数据库集成测试覆盖归一、派生、可见性、种子导入（含强制重导不重复）；HTTP 路由集成测试覆盖管理流程、可见性、403、单条重试；食材归一质量待提升（TD-8） |
+| admin-web | B | B | A | — | 登录、模型配置、邀请与用户、菜谱管理（列表、编辑、审核、食材库、导入记录）；组件测试 9 个，浏览器中实测通过 |
 | ios: MealMuseKit | B | B | A | — | 注册、恢复、撤销在模拟器中实测通过；尚无 UI 自动化测试 |
 | tools/harness | A | B | — | — | 6 条规则，18 个测试 |
 
-最近更新：2026-10-12（M2 进行中）。
+最近更新：2026-10-12（M2 完成）。
