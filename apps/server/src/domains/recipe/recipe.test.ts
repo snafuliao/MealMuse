@@ -155,4 +155,16 @@ describe('seed import', () => {
     expect(await importSeed(retry.providers, { seedDir, only })).toMatchObject({ imported: 1 });
     expect(retry.calls).toHaveLength(0);
   });
+
+  it('updates the same recipe when a forced re-import succeeds after a failure', async () => {
+    const first = providersWith([chatReply(JSON.stringify(structured))]);
+    await importSeed(first.providers, { seedDir, only });
+    const broken = providersWith([chatReply('不是 JSON'), chatReply('{}')]);
+    expect(await importSeed(broken.providers, { seedDir, only, force: true })).toMatchObject({
+      failed: 1,
+    });
+    const fixed = providersWith([chatReply(JSON.stringify(structured))]);
+    await importSeed(fixed.providers, { seedDir, only, force: true });
+    expect((await service.list({ q: '西红柿', page: 1, pageSize: 5 })).total).toBe(1);
+  });
 });

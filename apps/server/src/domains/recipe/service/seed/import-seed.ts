@@ -111,8 +111,9 @@ export async function importSeed(
         structured = await structureSeed(providers.llm, draft, known.slice(0, 600));
       }
       const toSave = structured;
+      const previousId = existing?.recipeId ?? (await repo.findRecipeIdBySourceRef(db, sourcePath));
       const recipeId = await db.transaction((tx) =>
-        saveRecipe(tx, existing?.recipeId ?? null, toRecipeDraft(toSave), {
+        saveRecipe(tx, previousId, toRecipeDraft(toSave), {
           status: 'published',
           source: 'seed',
           sourceRef: sourcePath,

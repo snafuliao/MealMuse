@@ -132,6 +132,20 @@ export async function replaceRecipeParts(
   }
 }
 
+/** 种子菜谱按原文件路径找回已有菜谱（导入失败的记录不保留 recipeId，不能只靠它）。 */
+export async function findRecipeIdBySourceRef(
+  db: DbExecutor,
+  sourceRef: string,
+): Promise<string | null> {
+  const [row] = await db
+    .select({ id: recipes.id })
+    .from(recipes)
+    .where(eq(recipes.sourceRef, sourceRef))
+    .orderBy(desc(recipes.updatedAt))
+    .limit(1);
+  return row?.id ?? null;
+}
+
 export async function findRecipeDetail(
   db: DbExecutor,
   id: string,
